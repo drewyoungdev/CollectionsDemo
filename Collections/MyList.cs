@@ -10,8 +10,8 @@ namespace CollectionsDemo.Collections
         /// <summary>
         /// Allow MyList<T>'s items to be accessed through index
         /// If an index that exceeds the number of items within the underlying Items [], throw exception
-        /// <param name="index">The index return and set items in the underlying Items[] at</param>
         /// </summary>
+        /// <param name="index">The index return and set items in the underlying Items[] at</param>
         public T this[int index]
         {
             get
@@ -45,8 +45,8 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Initialize MyList at a given capacity
-        /// <param name="capacity">The size to initialize the underlying Items [] with</param>
         /// </summary>
+        /// <param name="capacity">The size to initialize the underlying Items [] with</param>
         public MyList(int capacity = 5)
         {
             Items = new T[capacity];
@@ -86,8 +86,8 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Add new item to end of Items []
-        /// <param name="item">The item to be added at the end of the underlying Items []</param>
         /// </summary>
+        /// <param name="item">The item to be added at the end of the underlying Items []</param>
         public void Add(T item)
         {
             EnsureCapacity();
@@ -97,8 +97,8 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Add new collection to end of Items []
-        /// <param name="collection">The collection to be added at the end of the underlying Items []</param>
         /// </summary>
+        /// <param name="collection">The collection to be added at the end of the underlying Items []</param>
         public void AddRange(IEnumerable<T> collection)
         {
             int collectionCount = collection.Count();
@@ -114,9 +114,9 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Add new item at the specified index in the underlying Items []
+        /// </summary>
         /// <param name="index">The index to add the specified item</param>
         /// <param name="item">The item to add to the specified index</param>
-        /// </summary>
         public void Insert(int index, T item)
         {
             CheckIndexBoundary(index);
@@ -137,9 +137,9 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Inserts collection into underlying Items [] at the specified index
+        /// </summary>
         /// <param name="index">The index to add the specified item</param>
         /// <param name="collection">The collection to be inserted</param>
-        /// </summary>
         public void InsertRange(int index, IEnumerable<T> collection)
         {
             CheckIndexBoundary(index);
@@ -314,6 +314,7 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Removes collection from the underlying Items []
+        /// </summary>
         /// <param name="index">The index to remove the specified item</param>
         /// <param name="amount">The amount of items to remove from the specified index position</param>
         public void RemoveRange(int index, int amount)
@@ -338,8 +339,8 @@ namespace CollectionsDemo.Collections
 
         /// <summary>
         /// Check if specified index exists in current Items []
-        /// <param name="index">The index to check if exists</param>
         /// </summary>
+        /// <param name="index">The index to check if exists</param>
         void CheckIndexBoundary(int index)
         {
             if (index > this.Count || index < 0)
@@ -353,8 +354,8 @@ namespace CollectionsDemo.Collections
         /// To achieve this, we will copy and resize the array into a new one and move the ref
         /// Check if the current number of items in the underlying Items [] is at max capacity
         /// If action calling this method requires more space, the underlying Items [] will resize
-        /// <param name="numberOfNewItems">The number of new items being added</param>
         /// </summary>
+        /// <param name="numberOfNewItems">The number of new items being added</param>
         void EnsureCapacity(int numberOfNewItems = 1)
         {
             var requiredCapacity = Count + numberOfNewItems;
