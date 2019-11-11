@@ -338,39 +338,57 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
-        ///
+        /// Find all items in the underlying Items [] that returns true for a given predicate
+        /// Note: If original list is large and predicate used is generally truthy, this can cause many calls to Array.Resize
         /// </summary>
-        /// <param name="match"></param>
-        public T Find(Predicate<T> match)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="match"></param>
+        /// <param name="match">The predicate used to evaluate when to return</param>
         public MyList<T> FindAll(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            MyList<T> returnedList = new MyList<T>();
+
+            for (int i = 0; i < Count; i++)
+            {
+                if (match(this.Items[i]))
+                {
+                    returnedList.Add(this.Items[i]);
+                }
+            }
+
+            return returnedList;
         }
 
         /// <summary>
-        ///
+        /// Find the first item in the underlying Items [] that returns true for the given predicate
         /// </summary>
-        /// <param name="match"></param>
-        public T FindFirst(Predicate<T> match)
+        /// <param name="match">The predicate used to evaluate when to return</param>
+        public T Find(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < Count; i++)
+            {
+                if (match(this.Items[i]))
+                {
+                    return this.Items[i];
+                }
+            }
+
+            return default(T);
         }
 
         /// <summary>
-        ///
+        /// Find the last item in the underlying Items [] that returns true for the given predicate
         /// </summary>
-        /// <param name="match"></param>
+        /// <param name="match">The predicate used to evaluate when to return</param>
         public T FindLast(Predicate<T> match)
         {
-            throw new NotImplementedException();
+            for (int i = this.Count - 1; i >= 0; i--)
+            {
+                if (match(this.Items[i]))
+                {
+                    return this.Items[i];
+                }
+            }
+
+            return default(T);
         }
 
         /// <summary>

@@ -249,6 +249,18 @@ namespace CollectionsDemo
                 Console.WriteLine(x is string);
                 Console.WriteLine(x);
             });
+
+            // Demo Find and FindLast
+            Console.WriteLine("Demo Find and FindLast and FindAll");
+
+            myList = new MyList<int>() { 1, 4, 2, 3, 1, 2, 3, 4, 3, 4, 3 };
+
+            Console.WriteLine(myList.Find(x => x == 3));
+            Console.WriteLine(myList.FindLast(x => x == 4));
+
+            var allItems = myList.FindAll(x => x == 3);
+
+            allItems.ForEach(x => Console.WriteLine(x));
         }
     }
 }
