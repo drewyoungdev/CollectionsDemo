@@ -8,7 +8,7 @@ namespace CollectionsDemo.Collections
     public class MyList<T> : IEnumerable<T>
     {
         /// <summary>
-        /// Allow MyList's items to be accessed through index
+        /// Allow MyList<T>'s items to be accessed through index
         /// If an index that exceeds the number of items within the underlying Items [], throw exception
         /// <param name="index">The index return and set items in the underlying Items[] at</param>
         /// </summary>
@@ -29,12 +29,12 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
-        /// Capacity is the length of the underlying Items []
+        /// The length of the underlying Items []
         /// </summary>
         public int Capacity => Items.Length;
 
         /// <summary>
-        /// Count is the number of items in the underlying Items [].
+        /// The number of items in the underlying Items [].
         /// </summary>
         public int Count { get; private set; }
 
@@ -44,7 +44,7 @@ namespace CollectionsDemo.Collections
         T[] Items;
 
         /// <summary>
-        /// Constructor to initialize MyList at a given capacity
+        /// Initialize MyList at a given capacity
         /// <param name="capacity">The size to initialize the underlying Items [] with</param>
         /// </summary>
         public MyList(int capacity = 5)
@@ -85,9 +85,8 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
-        /// Add new capacity to underlying Items [] if needed
         /// Add new item to end of Items []
-        /// <param name="items">The item to be added at the end of the underlying Items []</param>
+        /// <param name="item">The item to be added at the end of the underlying Items []</param>
         /// </summary>
         public void Add(T item)
         {
@@ -97,7 +96,6 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
-        /// Add new capacity to underlying Items [] if needed (based on size of IEnumerable)
         /// Add new collection to end of Items []
         /// <param name="collection">The collection to be added at the end of the underlying Items []</param>
         /// </summary>
@@ -115,15 +113,14 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
-        /// Add new capacity to underlying Items [] if needed
-        /// Copies the items in underlying Items [] at the specified index
-        /// Places copy one index down from the specified index to leave specified index empty
-        /// Add new item in the empty indice
+        /// Add new item at the specified index in the underlying Items []
         /// <param name="index">The index to add the specified item</param>
         /// <param name="item">The item to add to the specified index</param>
         /// </summary>
         public void Insert(int index, T item)
         {
+            CheckIndexBoundary(index);
+
             EnsureCapacity();
 
             Array.Copy(
@@ -139,18 +136,21 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
-        /// Add new capacity to underlying Items [] if needed (based on size of IEnumerable)
+        /// Inserts collection into underlying Items [] at the specified index
         /// <param name="index">The index to add the specified item</param>
         /// <param name="collection">The collection to be inserted</param>
         /// </summary>
         public void InsertRange(int index, IEnumerable<T> collection)
         {
+            CheckIndexBoundary(index);
+
             #region Give up Memory for CPU
             // So that we do not need to enumerate the collection twice
             // Once to get the count/size of the incoming collection
             // Once to insert the incoming collection into the copied array
             // We can create another Array in memory to
             T[] newItemsAsArray = collection.ToArray();
+
             var collectionCount = newItemsAsArray.Length;
             #endregion
 
@@ -159,11 +159,12 @@ namespace CollectionsDemo.Collections
             // var collectionCount = collection.Count();
             #endregion
 
-            #region Avoid Copy then Shuffle
-            // Here we don't reference EnsureCapacity
-            // This allows us to generate the new underlying array once (which was previously produced from Array.Resize)
-            // Keep the new underlying array in memory and just copy the values from the original underlying array into the new one.
-            // We then change the reference of underlying Items[] to point to the new one.
+            #region Avoid Shuffle
+            // Here we don't use EnsureCapacity
+            // Which will do a full Copy the original array into the new array if a new target size is required
+            // Then after that full Copy we move items accordingly to their new positions
+            // Instead we create an empty Array and do two separate partial Copies
+            // This only results in minor performance gains
             var targetSize = Count + collectionCount;
 
             if (targetSize > Capacity)
@@ -197,16 +198,8 @@ namespace CollectionsDemo.Collections
             #endregion
 
             #region Copy then Shuffle
-            // // EnsureCapacity will do an Array.Resize which will potentially do an Array.Copy
-            // // This will copy all items from source Array into a destination Array with the given target size.
-            // // For example, an array of 100K items being inserted with another 100K items
-            // // Will cause the Array.Resize to create a 200K size Array and copy all items over
-            // // The original 100K Array is now up for GC
             // EnsureCapacity(collectionCount);
 
-            // // Once that copy is complete, we will "Shuffle" at the specified index
-            // // This creates another array to copy items between the specified index -> size of incoming collection
-            // // And then copy the values back into the original array at the new position
             // Array.Copy(
             //     sourceArray: this.Items,
             //     sourceIndex: index,
@@ -240,12 +233,116 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
+        /// Returns a new instance of MyList<T> containing items from the underlying Items [] starting from the specified index for a given amount
+        /// </summary>
+        /// <param name="index">The index to retrieve the specified item</param>
+        /// <param name="amount">The amount of items to retrieve from the specified index position</param>
+        public MyList<T> GetRange(int index, int amount)
+        {
+            MyList<T> returnedList = new MyList<T>(amount);
+
+            Array.Copy(
+                sourceArray: this.Items,
+                sourceIndex: index,
+                destinationArray: returnedList.Items,
+                destinationIndex: 0,
+                length: amount);
+
+            returnedList.Count = amount;
+
+            return returnedList;
+        }
+
+        /// <summary>
+        /// Searches for index of item in underlying Items [] based on the EqualityComparer for the given type
+        /// Removes item at the given index if the item is found
+        /// </summary>
+        /// <param name="item">The item to be removed within the underlying Items []</param>
+        /// <return>Returns a boolean value indicating whether the removal was successful</return>
+        public bool Remove(T item)
+        {
+            int index = Array.IndexOf(this.Items, item);
+
+            if (index >= 0)
+            {
+                RemoveAt(index);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Remove the item in the underlying Items [] at the specified index
+        /// </summary>
+        public void RemoveAll(Predicate<T> predicate)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                // Runs predicate and shuffles Array each time predicate returns true
+                if (predicate(this.Items[i]))
+                {
+                    RemoveAt(i);
+
+                    // if true,
+                    // reset counter at same position as original i when body is executed
+                    i--;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Remove the item in the underlying Items [] at the specified index
+        /// </summary>
+        /// <param name="index">The index to remove the item</param>
+        public void RemoveAt(int index)
+        {
+            CheckIndexBoundary(index);
+
+            // Move all elements one position after the specified index into the specified index
+            // Length will be the current Count - (offset plus one position after)
+            Array.Copy(
+                sourceArray: this.Items,
+                sourceIndex: index + 1,
+                destinationArray: this.Items,
+                destinationIndex: index,
+                length: Count - (index + 1));
+
+            Count--;
+        }
+
+        /// <summary>
+        /// Removes collection from the underlying Items []
+        /// <param name="index">The index to remove the specified item</param>
+        /// <param name="amount">The amount of items to remove from the specified index position</param>
+        public void RemoveRange(int index, int amount)
+        {
+            CheckIndexBoundary(index);
+
+            // If amount desired to be removed exceeds the current Count, throw exception
+            if (index + amount > Count)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            Array.Copy(
+                sourceArray: this.Items,
+                sourceIndex: index + amount,
+                destinationArray: this.Items,
+                destinationIndex: index,
+                length: Count - (index + amount));
+
+            Count -= amount;
+        }
+
+        /// <summary>
         /// Check if specified index exists in current Items []
         /// <param name="index">The index to check if exists</param>
         /// </summary>
         void CheckIndexBoundary(int index)
         {
-            if (index >= this.Count || index < 0)
+            if (index > this.Count || index < 0)
             {
                 throw new IndexOutOfRangeException();
             }

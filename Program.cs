@@ -149,6 +149,77 @@ namespace CollectionsDemo
             }
 
             Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo GetRange
+            Console.WriteLine("Demo GetRange");
+
+            myList = new MyList<int>() { 0, 1, 2, 3, 4, 5, 6 };
+
+            var index = 2;
+            var returnedList = myList.GetRange(index, myList.Count - index);
+
+            foreach (int item in returnedList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {returnedList.Count}");
+
+            // Demo RemoveAt
+            Console.WriteLine("Demo RemoveAt");
+
+            myList = new MyList<int>() { 0, 1, 2, 3, 4, 5, 6 };
+
+            myList.RemoveAt(3);
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo Remove
+            Console.WriteLine("Demo Remove");
+
+            myList = new MyList<int>() { 0, 1, 0, 1, 0 };
+
+            myList.Remove(1);
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo RemoveAll
+            Console.WriteLine("Demo RemoveAll");
+
+            myList = new MyList<int>() { 2, 0, 1, 0, 5 };
+
+            myList.RemoveAll(x => x > 0);
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo RemoveRange
+            Console.WriteLine("Demo RemoveRange");
+
+            myList = new MyList<int>() { 2, 0, 0, 0, 5 };
+
+            myList.RemoveRange(1, 3);
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
         }
     }
 }
