@@ -220,6 +220,35 @@ namespace CollectionsDemo
             }
 
             Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo TrueForAll
+            Console.WriteLine("Demo TrueForAll");
+
+            myList = new MyList<int>() { 1, 2, 3 };
+
+            Console.WriteLine(myList.TrueForAll(x => x < 4));
+            Console.WriteLine(myList.TrueForAll(x => x > 1));
+
+            // Demo Exists
+            Console.WriteLine("Demo Exists");
+
+            myList = new MyList<int>() { 1, 2, 3 };
+
+            Console.WriteLine(myList.Exists(x => x > 1));
+            Console.WriteLine(myList.Exists(x => x > 3));
+
+            // Demo ConvertAll
+            Console.WriteLine("Demo ConvertAll");
+
+            myList = new MyList<int>() { 1, 2, 3};
+
+            MyList<string> myListString = myList.ConvertAll(x => x.ToString());
+
+            myListString.ForEach(x =>
+            {
+                Console.WriteLine(x is string);
+                Console.WriteLine(x);
+            });
         }
     }
 }

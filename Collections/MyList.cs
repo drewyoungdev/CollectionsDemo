@@ -338,6 +338,106 @@ namespace CollectionsDemo.Collections
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="match"></param>
+        public T Find(Predicate<T> match)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="match"></param>
+        public MyList<T> FindAll(Predicate<T> match)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="match"></param>
+        public T FindFirst(Predicate<T> match)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="match"></param>
+        public T FindLast(Predicate<T> match)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns true if a single items in the underlying Items [] matches the predicate
+        /// </summary>
+        /// <param name="match">The predicate used to evaluate if a single items in Items [] returns true</param>
+        public bool Exists(Predicate<T> match)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                if (match(this.Items[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if all items in the underlying Items [] matches the predicate
+        /// </summary>
+        /// <param name="match">The predicate used to evaluate if all items in Items [] returns true</param>
+        public bool TrueForAll(Predicate<T> match)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                if (!match(this.Items[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Executes a given action on all items in the underlying Items []
+        /// </summary>
+        /// <param name="match">The action executed using the value or reference of each item in Items []</param>
+        public void ForEach(Action<T> action)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                action(this.Items[i]);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new instance of MyList<U> and uses conversion to convert each item in the underlyingg Items []
+        /// </summary>
+        /// <param name="conversion">The function executed to convert each item <T> to <U></param>
+        public MyList<U> ConvertAll<U>(Func<T, U> conversion)
+        {
+            MyList<U> returnedList = new MyList<U>(this.Count);
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                returnedList.Items[i] = conversion(this.Items[i]);
+            }
+
+            returnedList.Count = this.Count;
+
+            return returnedList;
+        }
+
+        /// <summary>
         /// Check if specified index exists in current Items []
         /// </summary>
         /// <param name="index">The index to check if exists</param>
