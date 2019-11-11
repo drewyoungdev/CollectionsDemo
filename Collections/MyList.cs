@@ -28,11 +28,21 @@ namespace CollectionsDemo.Collections
 
         void CheckIndexBoundary(int index)
         {
-            if (index >= this.ListSize || index < 0)
+            if (index >= this.Count || index < 0)
             {
                 throw new IndexOutOfRangeException();
             }
         }
+
+        /// <summary>
+        /// Capacity is the length of the underlying Items []
+        /// </summary>
+        public int Capacity => Items.Length;
+
+        /// <summary>
+        /// Count is the number of items in the underlying Items [].
+        /// </summary>
+        public int Count { get; private set; }
 
         /// <summary>
         /// The underlying Items []
@@ -40,32 +50,58 @@ namespace CollectionsDemo.Collections
         T[] Items;
 
         /// <summary>
-        /// ListSize is the number of items in the underlying Items [].
-        /// Items [] should always be >= the number of items
-        /// </summary>
-        int ListSize;
-
-        /// <summary>
         /// List initializes memory allocated for 5 items
         /// </summary>
-        public MyList()
+        public MyList(int capacity = 5)
         {
-            Items = new T[5];
+            Items = new T[capacity];
         }
 
         /// <summary>
-        /// We must always ensure the underlying Items[] has space for the new item
+        /// The underlyingn Items [] should always be >= the number of items
         /// To achieve this, we will copy and resize the array into a new one and move the ref
         /// Each time an item is added, we increase the space "taken" up in the array with the item added
         /// </summary>
         public void Add(T item)
         {
-            if (ListSize == Items.Length)
+            if (Count == Capacity)
             {
-                Array.Resize(ref Items, Items.Length * 2);
+                Array.Resize(ref Items, Capacity * 2);
             }
 
-            Items[ListSize++] = item;
+            Items[Count++] = item;
+        }
+
+        /// <summary>
+        /// Resizes underlying Items [] to array size of the current Count
+        /// </summary>
+        public void TrimExcess()
+        {
+            if (Count < Capacity)
+            {
+                Array.Resize(ref Items, Count);
+            }
+        }
+
+        /// <summary>
+        /// Reset Count to zero and nullify reference types and abandon value types
+        //// Note: this does NOT resize in case user re-adds items into MyList
+        /// </summary>
+        public void Clear()
+        {
+            Count = 0;
+
+            // Pre-mature Optimization to avoid for-loop:
+            // if (typeof(T).BaseType.Equals(typeof(ValueType)))
+            // {
+            //     return;
+            // }
+
+            // Nullify Reference Types to allow GC or Abandon Value Types
+            for (int i = 0; i < Count; i++)
+            {
+                Items[i] = default(T);
+            }
         }
 
         /// <summary>
@@ -77,7 +113,8 @@ namespace CollectionsDemo.Collections
         {
             return new MyListEnumerator(this);
 
-            // for (int i = 0; i < ListSize; i++)
+            // Alternative:
+            // for (int i = 0; i < Count; i++)
             // {
             //     yield return Items[i];
             // };
@@ -129,7 +166,7 @@ namespace CollectionsDemo.Collections
 
                         // If CurrentIndex is at end of MyList, return false
                         // Greater than for safe-measure although should be unnecessary
-                        if (this.CurrentIndex >= this.MyList.ListSize)
+                        if (this.CurrentIndex >= this.MyList.Count)
                         {
                             return false;
                         }
