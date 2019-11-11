@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using CollectionsDemo.Collections;
 
 namespace CollectionsDemo
@@ -54,7 +56,7 @@ namespace CollectionsDemo
             }
 
             // Demo TrimExcess
-            Console.WriteLine("Demo Trim Excess");
+            Console.WriteLine("Demo TrimExcess");
 
             currentCapacity = myList.Capacity;
 
@@ -70,6 +72,83 @@ namespace CollectionsDemo
             myList.Clear();
 
             Console.WriteLine($"Cleared from count {currentCount} to {myList.Count}");
+
+            // Demo Add
+            Console.WriteLine("Demo Add");
+
+            myList = new MyList<int>(3) { 1, 2, 3 };
+
+            myList.Add(5000);
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo AddRange
+            Console.WriteLine("Demo AddRange");
+
+            myList = new MyList<int>(3) { 1, 2, 3 };
+
+            myList.AddRange(new [] { 10, 10, 10, 10, 10, 10, 10 });
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo Insert
+            Console.WriteLine("Demo Insert");
+
+            myList = new MyList<int>(3) { 1, 2, 3 };
+
+            myList.Insert(2, 2500);
+            myList.Insert(4, 2500);
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
+
+            // Demo InsertRange
+            Console.WriteLine("Demo InsertRange");
+
+            // Performance Tests (see region tags in InsertRange())
+            // Comparison between Copy then Shuffle experiment
+            // Comparison between giving up CPU vs Memory experiment
+            // myList = new MyList<int>();
+
+            // int[] aBunchOfItems = Enumerable.Range(0, 100000000).ToArray();
+
+            // myList.AddRange(aBunchOfItems);
+
+            // Stopwatch timer = new Stopwatch();
+
+            // timer.Start();
+
+            // myList.InsertRange(5, aBunchOfItems);
+
+            // timer.Stop();
+
+            // Console.WriteLine(timer.ElapsedTicks / (float)Stopwatch.Frequency);
+            // Console.WriteLine($"New Count: {myList.Count}");
+
+            myList = new MyList<int>() { 1, 2, 3 };
+
+            myList.InsertRange(1, new [] { 10, 10, 10, 10, 10, 10, 10 });
+
+            foreach (int item in myList)
+            {
+                Console.WriteLine(item);
+            }
+
+            Console.WriteLine($"New Count: {myList.Count}");
         }
     }
 }
